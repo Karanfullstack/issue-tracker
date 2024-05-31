@@ -1,11 +1,13 @@
 import { Button } from "@radix-ui/themes";
+import Link from "next/link";
 import React from "react";
 
 export default function IssuePage() {
 	return (
 		<div>
-			Issue Page
-			<Button>Create</Button>
+			<Button>
+				<Link href="/issues/new">Create</Link>
+			</Button>
 		</div>
 	);
 }
