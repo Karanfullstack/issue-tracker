@@ -16,7 +16,7 @@ export default function Navbar() {
 			</Link>
 			<ul className="flex space-x-3">
 				{navbar.map((item) => (
-					<li>
+					<li key={item.label}>
 						<Link
 							className={classNames({
 								"text-zinc-900": currentPath === item.href,
