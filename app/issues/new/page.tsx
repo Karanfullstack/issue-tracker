@@ -35,7 +35,7 @@ export default function NewIssuePage() {
 		try {
 			setSubmit(true);
 			await axios.post("/api/issues", data);
-			router.push("/issues");
+			router.replace("/issues");
 		} catch (error) {
 			setSubmit(false);
 			setError("An unexpected error occured!");
