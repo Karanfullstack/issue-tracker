@@ -1,11 +1,10 @@
 "use client";
-import ErrorMessage from "@/app/components/ErrorMessage";
-import Spinner from "@/app/components/Spinner";
+
+import { ErrorMessage, Spinner } from "@/app/components";
 import { createIssueSchema } from "@/app/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Callout, TextField } from "@radix-ui/themes";
 import axios from "axios";
-import delay from "delay";
 import "easymde/dist/easymde.min.css";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
