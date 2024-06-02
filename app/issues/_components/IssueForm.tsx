@@ -1,6 +1,6 @@
 "use client";
 import { ErrorMessage, Spinner } from "@/app/components";
-import { createIssueSchema } from "@/app/validations";
+import { IssueScema } from "@/app/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Issue } from "@prisma/client";
 import { Button, Callout, TextField } from "@radix-ui/themes";
@@ -15,7 +15,7 @@ import { z } from "zod";
 const SimpleEditor = dynamic(() => import("react-simplemde-editor"), {
 	ssr: false,
 });
-type IssueFormData = z.infer<typeof createIssueSchema>;
+type IssueFormData = z.infer<typeof IssueScema>;
 
 export default function IssueForm({ issue }: { issue?: Issue }) {
 	const [error, setError] = useState("");
@@ -28,14 +28,18 @@ export default function IssueForm({ issue }: { issue?: Issue }) {
 
 		formState: { errors },
 	} = useForm<IssueFormData>({
-		resolver: zodResolver(createIssueSchema),
+		resolver: zodResolver(IssueScema),
 	});
 
 	const onSubmit = async (data: FieldValues) => {
 		try {
 			setSubmit(true);
-			await axios.post("/api/issues", data);
-			router.replace("/issues");
+			if (issue) {
+				await axios.patch("/api/issues/" + issue.id, data);
+			} else {
+				await axios.post("/api/issues", data);
+			}
+			router.push("/issues");
 		} catch (error) {
 			setSubmit(false);
 			setError("An unexpected error occured!");
