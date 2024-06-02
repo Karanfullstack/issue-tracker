@@ -1,5 +1,4 @@
 "use client";
-
 import { ErrorMessage, Spinner } from "@/app/components";
 import { createIssueSchema } from "@/app/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -52,7 +51,11 @@ export default function IssueForm({ issue }: { issue?: Issue }) {
 			)}
 			<form onSubmit={handleSubmit(onSubmit)} className="space-y-3 ">
 				<ErrorMessage>{errors.title?.message}</ErrorMessage>
-				<TextField.Root defaultValue={issue?.title} placeholder="Title" {...register("title")} />
+				<TextField.Root
+					defaultValue={issue?.title}
+					placeholder="Title"
+					{...register("title")}
+				/>
 
 				<Controller
 					control={control}
