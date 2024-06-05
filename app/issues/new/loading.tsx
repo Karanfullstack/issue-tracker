@@ -1,5 +1,3 @@
-import React from "react";
+import IssueSkeleton from "@/app/issues/_components/IssueSkeleton";
 
-export default function LoadingNewIssue() {
-	return <div>loading..</div>;
-}
+export default IssueSkeleton;
