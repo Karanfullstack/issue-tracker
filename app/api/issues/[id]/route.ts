@@ -34,3 +34,16 @@ export async function PATCH(request: NextRequest, { params }: ParamsProps) {
 		{ status: 201 }
 	);
 }
+
+export async function DELETE(request: NextRequest, { params }: ParamsProps) {
+	const issue = await prisma.issue.findFirst({
+		where: { id: parseInt(params.id) },
+	});
+
+	if (!issue)
+		return NextResponse.json({ error: "Invalid Issue" }, { status: 404 });
+	await prisma.issue.delete({
+		where: { id: parseInt(params.id) },
+	});
+	return NextResponse.json({});
+}
