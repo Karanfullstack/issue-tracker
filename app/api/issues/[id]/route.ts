@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { IssueScema } from "@/app/validations";
 import prisma from "@/prisma/client";
+import delay from "delay";
 
 interface ParamsProps {
 	params: { id: string };
@@ -36,6 +37,8 @@ export async function PATCH(request: NextRequest, { params }: ParamsProps) {
 }
 
 export async function DELETE(request: NextRequest, { params }: ParamsProps) {
+
+	 await delay(2000)
 	const issue = await prisma.issue.findFirst({
 		where: { id: parseInt(params.id) },
 	});

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 export default function Navbar() {
 	const currentPath = usePathname();
 	const navbar = [
-		{ label: "Dashboard", href: "/dashboard" },
+		{ label: "Dashboard", href: "/" },
 		{ label: "Issues", href: "/issues" },
 	];
 	return (
