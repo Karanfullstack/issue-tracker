@@ -4,8 +4,14 @@ import { AiFillBug } from "react-icons/ai";
 import classNames from "classnames";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Box, Container, Flex } from "@radix-ui/themes";
-
+import {
+	Avatar,
+	Box,
+	Container,
+	DropdownMenu,
+	Text,
+	Flex,
+} from "@radix-ui/themes";
 export default function Navbar() {
 	const { status, data: session } = useSession();
 	const currentPath = usePathname();
@@ -16,7 +22,7 @@ export default function Navbar() {
 	return (
 		<nav
 			className="
-		   border p-6  mb-5"
+		   border p-4  mb-5"
 		>
 			<Container>
 				<Flex justify={"between"} align={"center"}>
@@ -44,7 +50,24 @@ export default function Navbar() {
 					</Flex>
 					<Box>
 						{status === "authenticated" && (
-							<Link href="/api/auth/signout">Logout</Link>
+							<DropdownMenu.Root>
+								<DropdownMenu.Trigger>
+									<Avatar
+										src={session.user!.image!}
+										size={"3"}
+										fallback="?"
+										radius="full"
+									></Avatar>
+								</DropdownMenu.Trigger>
+								<DropdownMenu.Content>
+									<DropdownMenu.Label>
+										<Text size={"2"}>{session.user!.email}</Text>
+									</DropdownMenu.Label>
+									<DropdownMenu.Item>
+										<Link href="/api/auth/signout">Logout</Link>
+									</DropdownMenu.Item>
+								</DropdownMenu.Content>
+							</DropdownMenu.Root>
 						)}
 						{status === "unauthenticated" && (
 							<Link href="/api/auth/signin">Login</Link>
