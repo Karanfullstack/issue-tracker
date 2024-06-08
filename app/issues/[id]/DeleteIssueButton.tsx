@@ -17,7 +17,7 @@ export default function DeleteIssueButton({ issueId }: Props) {
 		try {
 			setDeleting(true);
 			await axios.delete("/api/issues/" + issueId);
-			router.push("/issues");
+			router.push("/issues/lists");
 			router.refresh();
 		} catch (error) {
 			setError(true);

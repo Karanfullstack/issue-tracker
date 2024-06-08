@@ -7,7 +7,7 @@ export default function Navbar() {
 	const currentPath = usePathname();
 	const navbar = [
 		{ label: "Dashboard", href: "/" },
-		{ label: "Issues", href: "/issues" },
+		{ label: "Issues", href: "/issues/lists" },
 	];
 	return (
 		<nav className="flex space-x-4 p-4 h-20 border items-center mb-5">
