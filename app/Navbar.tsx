@@ -4,6 +4,7 @@ import { AiFillBug } from "react-icons/ai";
 import classNames from "classnames";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
+import Skeleton from "./components/Skeleton";
 import {
 	Avatar,
 	Box,
@@ -62,6 +63,16 @@ const NavLinks = () => {
 
 const AuthStatus = () => {
 	const { status, data: session } = useSession();
+	if (status === "loading") return <Skeleton width={"4rem"} height={"2rem"} />;
+
+	if (status === "unauthenticated") {
+		return (
+			<Button>
+				<Link href="/api/auth/signin">Login</Link>
+			</Button>
+		);
+	}
+
 	return (
 		<Box>
 			{status === "authenticated" && (
@@ -83,9 +94,6 @@ const AuthStatus = () => {
 						</DropdownMenu.Item>
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>
-			)}
-			{status === "unauthenticated" && (
-				<Button><Link href="/api/auth/signin">Login</Link></Button>
 			)}
 		</Box>
 	);
