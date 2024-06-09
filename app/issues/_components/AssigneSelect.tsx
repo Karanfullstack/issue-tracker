@@ -1,12 +1,13 @@
 "use client";
-
 import { Issue, User } from "@prisma/client";
-import { Select } from "@radix-ui/themes";
+import { Avatar, Text, Flex, Select } from "@radix-ui/themes";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Skeleton } from "@/app/components";
-
+import { useRouter } from "next/navigation";
+import toast, { Toaster } from "react-hot-toast";
 export default function AssigneSelect({ issue }: { issue: Issue }) {
+	const router = useRouter();
 	const {
 		data: users,
 		error,
@@ -22,26 +23,51 @@ export default function AssigneSelect({ issue }: { issue: Issue }) {
 
 	if (error) return null;
 	return (
-		<Select.Root
-			defaultValue={issue.assignedToUserID || "unassigned"}
-			onValueChange={(userId) => {
-				axios.patch("/api/issues/" + issue.id, {
-					assignedToUserID: userId === "unassigned" ? null : userId,
-				});
-			}}
-		>
-			<Select.Trigger placeholder="Asssigne.." />
-			<Select.Content>
-				<Select.Group>
-					<Select.Label>Suggestions</Select.Label>
-					<Select.Item value={"unassigned"}>Unassigned</Select.Item>
-					{users?.map((user) => (
-						<Select.Item key={user.id} value={user.id}>
-							{user.name}
-						</Select.Item>
-					))}
-				</Select.Group>
-			</Select.Content>
-		</Select.Root>
+		<>
+			<Toaster />
+			<Select.Root
+				defaultValue={issue.assignedToUserID || "unassigned"}
+				onValueChange={async (userId) => {
+					try {
+						await axios.patch("/api/issues/" + issue.id, {
+							assignedToUserID: userId === "unassigned" ? null : userId,
+						});
+						const user = users?.find((user) => user.id === userId);
+						toast((t) => (
+							<Flex gap={"2"} align={"center"}>
+								{user && <Avatar src={user?.image!} fallback={""} />}
+								<Text weight={"bold"}>
+									{(user && "Assiged To " + user.name) || "UnAssigned"}{" "}
+								</Text>
+							</Flex>
+						));
+
+						router.refresh();
+					} catch (error) {
+						toast.error("Changes Could Not Be Done!");
+					}
+				}}
+			>
+				<Select.Trigger placeholder="Asssigne.." />
+				<Select.Content>
+					<Select.Group>
+						<Select.Label>Suggestions</Select.Label>
+						<Select.Item value={"unassigned"}>Unassigned</Select.Item>
+						{users?.map((user) => (
+							<Select.Item key={user.id} value={user.id}>
+								<Avatar
+									size={"1"}
+									radius="full"
+									mr="3"
+									src={user.image!}
+									fallback={"?"}
+								/>
+								{user.name}
+							</Select.Item>
+						))}
+					</Select.Group>
+				</Select.Content>
+			</Select.Root>
+		</>
 	);
 }
