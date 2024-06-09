@@ -12,6 +12,7 @@ export default function IssueSkeleton() {
 				<Flex gap={"3"} my={"3"}>
 					<Skeleton width={"4rem"} />
 					<Skeleton width={"4rem"} />
+					<Skeleton width={"4rem"} />
 				</Flex>
 
 				<Skeleton height={"25rem"} />

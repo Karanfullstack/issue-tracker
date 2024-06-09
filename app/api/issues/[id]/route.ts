@@ -19,19 +19,18 @@ export async function PATCH(request: NextRequest, { params }: ParamsProps) {
 			{ error: validations.error.format() },
 			{ status: 400 }
 		);
-	const { assignedToUserID, title, description } = body;
+	const { assignedToUserID, title, description, status } = validations.data;
 
 	if (assignedToUserID) {
 		const user = await prisma.user.findFirst({
 			where: { id: assignedToUserID },
 		});
-		
+
 		if (!user)
 			return NextResponse.json(
 				{ error: "User Id is invalid" },
 				{ status: 400 }
 			);
-			console.log(user)
 	}
 
 	const issue = await prisma.issue.findFirst({
@@ -47,6 +46,7 @@ export async function PATCH(request: NextRequest, { params }: ParamsProps) {
 			title,
 			description,
 			assignedToUserID,
+			status,
 		},
 	});
 	return NextResponse.json(
