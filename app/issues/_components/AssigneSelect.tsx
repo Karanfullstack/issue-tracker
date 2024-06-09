@@ -19,7 +19,7 @@ export default function AssigneSelect({ issue }: { issue: Issue }) {
 				assignedToUserID: userId === "unassigned" ? null : userId,
 			});
 			const user = users?.find((user) => user.id === userId);
-			toast.success((t) => (
+			toast((t) => (
 				<Flex gap={"2"} align={"center"}>
 					{user && <Avatar src={user?.image!} fallback={""} />}
 					<Text weight={"bold"}>
