@@ -2,35 +2,32 @@
 
 import { User } from "@prisma/client";
 import { Select } from "@radix-ui/themes";
-import axios, { CanceledError } from "axios";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { Skeleton } from "@/app/components";
 
 export default function AssigneSelect() {
-	const [users, setUsers] = useState<User[]>([]);
+	const {
+		data: users,
+		error,
+		isLoading,
+	} = useQuery<User[]>({
+		queryKey: ["users"],
+		queryFn: () => axios.get("/api/users").then((res) => res.data),
+		retry: 3,
+		staleTime: 60 * 1000,
+	});
 
-	useEffect(() => {
-		const controller = new AbortController();
+	if (isLoading) return <Skeleton height={"2rem"} />;
 
-		const fetchUsesr = async () => {
-			try {
-				const { data } = await axios.get<User[]>("/api/users", {
-					signal: controller.signal,
-				});
-				setUsers(data);
-			} catch (error) {
-				if (error instanceof CanceledError) return;
-			}
-		};
-		fetchUsesr();
-		return () => controller.abort();
-	}, []);
+	if (error) return null;
 	return (
 		<Select.Root>
 			<Select.Trigger placeholder="Asssigne.." />
 			<Select.Content>
 				<Select.Group>
 					<Select.Label>Suggestions</Select.Label>
-					{users.map((user) => (
+					{users?.map((user) => (
 						<Select.Item value={user.id}>{user.name}</Select.Item>
 					))}
 				</Select.Group>
