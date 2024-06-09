@@ -34,10 +34,11 @@ export default function IssueForm({ issue }: { issue?: Issue }) {
 			setSubmit(true);
 			if (issue) {
 				await axios.patch("/api/issues/" + issue.id, data);
+				router.push("/issues/" + issue.id);
 			} else {
 				await axios.post("/api/issues", data);
+				router.push("/issues/lists");
 			}
-			router.push("/issues/lists");
 			router.refresh();
 		} catch (error) {
 			setSubmit(false);
