@@ -8,45 +8,36 @@ import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 export default function AssigneSelect({ issue }: { issue: Issue }) {
 	const router = useRouter();
-	const {
-		data: users,
-		error,
-		isLoading,
-	} = useQuery<User[]>({
-		queryKey: ["users"],
-		queryFn: () => axios.get("/api/users").then((res) => res.data),
-		retry: 3,
-		staleTime: 60 * 1000,
-	});
+	const { data: users, error, isLoading } = useUsers();
 
 	if (isLoading) return <Skeleton height={"2rem"} />;
 
 	if (error) return null;
+	const onChangeAssigne = async (userId: string) => {
+		try {
+			await axios.patch("/api/issues/" + issue.id, {
+				assignedToUserID: userId === "unassigned" ? null : userId,
+			});
+			const user = users?.find((user) => user.id === userId);
+			toast.success((t) => (
+				<Flex gap={"2"} align={"center"}>
+					{user && <Avatar src={user?.image!} fallback={""} />}
+					<Text weight={"bold"}>
+						{(user && "Assiged To " + user.name) || "User UnAssigned"}{" "}
+					</Text>
+				</Flex>
+			));
+			router.refresh();
+		} catch (error) {
+			toast.error("Changes Could Not Be Done!");
+		}
+	};
 	return (
 		<>
 			<Toaster />
 			<Select.Root
 				defaultValue={issue.assignedToUserID || "unassigned"}
-				onValueChange={async (userId) => {
-					try {
-						await axios.patch("/api/issues/" + issue.id, {
-							assignedToUserID: userId === "unassigned" ? null : userId,
-						});
-						const user = users?.find((user) => user.id === userId);
-						toast((t) => (
-							<Flex gap={"2"} align={"center"}>
-								{user && <Avatar src={user?.image!} fallback={""} />}
-								<Text weight={"bold"}>
-									{(user && "Assiged To " + user.name) || "UnAssigned"}{" "}
-								</Text>
-							</Flex>
-						));
-
-						router.refresh();
-					} catch (error) {
-						toast.error("Changes Could Not Be Done!");
-					}
-				}}
+				onValueChange={onChangeAssigne}
 			>
 				<Select.Trigger placeholder="Asssigne.." />
 				<Select.Content>
@@ -71,3 +62,11 @@ export default function AssigneSelect({ issue }: { issue: Issue }) {
 		</>
 	);
 }
+
+const useUsers = () =>
+	useQuery<User[]>({
+		queryKey: ["users"],
+		queryFn: () => axios.get("/api/users").then((res) => res.data),
+		retry: 3,
+		staleTime: 60 * 1000,
+	});
