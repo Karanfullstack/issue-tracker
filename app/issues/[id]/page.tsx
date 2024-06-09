@@ -27,7 +27,7 @@ export default async function page({ params }: Props) {
 
 			{session && (
 				<Flex direction={"column"} gap={"4"}>
-					<AssigneSelect />
+					<AssigneSelect issue={issue} />
 					<EditIssueButton issueId={issue.id} />
 					<DeleteIssueButton issueId={issue.id} />
 				</Flex>
