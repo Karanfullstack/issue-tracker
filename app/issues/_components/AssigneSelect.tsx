@@ -21,7 +21,7 @@ export default function AssigneSelect({ issue }: { issue: Issue }) {
 			const user = users?.find((user) => user.id === userId);
 			toast((t) => (
 				<Flex gap={"2"} align={"center"}>
-					{user && <Avatar src={user?.image!} fallback={""} />}
+					{user && <Avatar radius="full" src={user?.image!} fallback={""} />}
 					<Text weight={"bold"}>
 						{(user && "Assiged To " + user.name) || "User UnAssigned"}{" "}
 					</Text>

@@ -18,9 +18,9 @@ export default function IssueFilter() {
 	const router = useRouter();
 	return (
 		<Select.Root
-			onValueChange={(value) => {
-				const status = value === "none" ? "" : "?status=" + value;
-				router.push("/issues/lists" + status);
+			onValueChange={(status) => {
+				const query = status === "none" ? "" : `?status=${status}`;
+				router.push("/issues/lists" + query);
 				router.refresh();
 			}}
 		>

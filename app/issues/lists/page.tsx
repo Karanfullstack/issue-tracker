@@ -1,18 +1,47 @@
-import { IssueStatusBadge, Link } from "@/app/components";
+import { IssueStatusBadge } from "@/app/components";
 import prisma from "@/prisma/client";
 import { Table } from "@radix-ui/themes";
 import IssueActions from "./IssueActions";
-import { Status } from "@prisma/client";
-import delay from "delay";
+import { Issue, Status } from "@prisma/client";
+import { Link } from "@/app/components";
+import NextLink from "next/link";
+import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
+import { it } from "node:test";
+
 interface SearchParamsProps {
-	searchParams: { status: Status };
+	searchParams: {
+		status: Status;
+		orderBy: keyof Issue;
+		sortType: "asc" | "desc";
+	};
 }
+
 export default async function IssuePage({ searchParams }: SearchParamsProps) {
+	const status = Object.values(Status).includes(searchParams.status)
+		? searchParams.status
+		: undefined;
+
 	const issues = await prisma.issue.findMany({
 		where: {
-			status: searchParams.status,
+			status,
+		},
+		orderBy: {
+			[searchParams.orderBy]: searchParams.sortType,
 		},
 	});
+
+	const columns: { label: string; value: keyof Issue; classNames?: string }[] =
+		[
+			{ label: "Issue", value: "title" },
+			{ label: "Status", value: "status", classNames: "hidden md:table-cell" },
+			{
+				label: "Created",
+				value: "createdAt",
+				classNames: "hidden md:table-cell",
+			},
+		];
+
+	console.log({ ...searchParams, orderBy: "title", sortType: "asc" });
 
 	return (
 		<div>
@@ -20,13 +49,23 @@ export default async function IssuePage({ searchParams }: SearchParamsProps) {
 			<Table.Root variant="surface">
 				<Table.Header>
 					<Table.Row>
-						<Table.ColumnHeaderCell>Issue</Table.ColumnHeaderCell>
-						<Table.ColumnHeaderCell className="hidden md:table-cell">
-							Status
-						</Table.ColumnHeaderCell>
-						<Table.ColumnHeaderCell className="hidden md:table-cell">
-							Created
-						</Table.ColumnHeaderCell>
+						{columns.map((item) => (
+							<Table.ColumnHeaderCell key={item.value}>
+								<NextLink
+									href={{
+										query: {
+											...searchParams,
+											orderBy: item.value,
+											sortType:
+												searchParams.sortType === "asc" ? "desc" : "asc",
+										},
+									}}
+								>
+									{item.label}
+								</NextLink>
+								<ArrowCompoent value={item.value} searchParams={searchParams} />
+							</Table.ColumnHeaderCell>
+						))}
 					</Table.Row>
 				</Table.Header>
 				<Table.Body>
@@ -52,6 +91,22 @@ export default async function IssuePage({ searchParams }: SearchParamsProps) {
 	);
 }
 
+interface ArrowCompoentI {
+	value: string;
+	searchParams: {
+		orderBy: string;
+		sortType: "asc" | "desc";
+	};
+}
+const ArrowCompoent = ({ value, searchParams }: ArrowCompoentI) => {
+	return value === searchParams.orderBy ? (
+		searchParams.sortType === "asc" ? (
+			<ArrowUpIcon  className="inline ml-2"/>
+		) : (
+			<ArrowDownIcon  className="inline ml-2"/>
+		)
+	) : null;
+};
 // this to forcefully make dynamic
 export const dynamic = "force-dynamic";
 // for revlidate in terms of time
