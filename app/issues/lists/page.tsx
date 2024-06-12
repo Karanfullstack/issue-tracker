@@ -31,16 +31,18 @@ export default async function IssuePage({ searchParams }: SearchParamsProps) {
 		? searchParams.status
 		: undefined;
 
+	const sortType =
+		searchParams.sortType === "asc"
+			? "asc"
+			: searchParams.sortType === "desc"
+			? "desc"
+			: undefined;
+
 	const orderBy = columns
 		.map((column) => column.value)
 		.includes(searchParams.orderBy)
 		? {
-				[searchParams.orderBy]:
-					searchParams.sortType === "asc"
-						? "asc"
-						: searchParams.sortType === "desc"
-						? "desc"
-						: undefined,
+				[searchParams.orderBy]: sortType,
 		  }
 		: undefined;
 
