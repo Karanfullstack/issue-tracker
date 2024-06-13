@@ -1,17 +1,19 @@
 import { IssueStatusBadge } from "@/app/components";
 import prisma from "@/prisma/client";
-import { Table } from "@radix-ui/themes";
+import { Flex, Table } from "@radix-ui/themes";
 import IssueActions from "./IssueActions";
 import { Issue, Status } from "@prisma/client";
 import { Link } from "@/app/components";
 import NextLink from "next/link";
 import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
+import Pagination from "./Pagination";
 
 interface SearchParamsProps {
 	searchParams: {
 		status: Status;
 		orderBy: keyof Issue;
 		sortType: "asc" | "desc";
+		page: string;
 	};
 }
 
@@ -30,7 +32,7 @@ export default async function IssuePage({ searchParams }: SearchParamsProps) {
 	const status = Object.values(Status).includes(searchParams.status)
 		? searchParams.status
 		: undefined;
-
+	const where = { status };
 	const sortType =
 		searchParams.sortType === "asc"
 			? "asc"
@@ -46,21 +48,27 @@ export default async function IssuePage({ searchParams }: SearchParamsProps) {
 		  }
 		: undefined;
 
-	const issues = await prisma.issue.findMany({
-		where: {
-			status,
-		},
-		orderBy,
-	});
+	const page = parseInt(searchParams.page) || 1;
+	const pageSize = 10;
 
+	const issues = await prisma.issue.findMany({
+		where,
+		orderBy,
+		skip: (page - 1) * pageSize,
+		take: pageSize,
+	});
+	const issuesCount = await prisma.issue.count({where});
 	return (
-		<div>
+		<Flex direction={"column"} gap={"3"}>
 			<IssueActions />
 			<Table.Root variant="surface">
 				<Table.Header>
 					<Table.Row>
 						{columns.map((item) => (
-							<Table.ColumnHeaderCell key={item.value}>
+							<Table.ColumnHeaderCell
+								className={item.classNames}
+								key={item.value}
+							>
 								<NextLink
 									href={{
 										query: {
@@ -97,7 +105,12 @@ export default async function IssuePage({ searchParams }: SearchParamsProps) {
 					))}
 				</Table.Body>
 			</Table.Root>
-		</div>
+			<Pagination
+				pageCount={issuesCount}
+				pageSize={pageSize}
+				currentPage={page}
+			/>
+		</Flex>
 	);
 }
 
