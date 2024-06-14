@@ -1,6 +1,11 @@
 "use client";
 
-import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons";
+import {
+	ArrowLeftIcon,
+	ArrowRightIcon,
+	DoubleArrowLeftIcon,
+	DoubleArrowRightIcon,
+} from "@radix-ui/react-icons";
 import { Button, Flex } from "@radix-ui/themes";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
@@ -17,7 +22,7 @@ export default function Pagination({
 }: Props) {
 	const router = useRouter();
 	const params = useSearchParams();
-
+	
 	const changePage = (page: number) => {
 		const newParams = new URLSearchParams(params);
 		newParams.set("page", page.toString());
@@ -27,6 +32,16 @@ export default function Pagination({
 	return (
 		<Flex gap={"3"} justify={"center"} align={"center"}>
 			<Button
+				variant="outline"
+				className=" !cursor-pointer"
+				disabled={currentPage === 1}
+				onClick={() => changePage(1)}
+			>
+				<DoubleArrowLeftIcon />
+			</Button>
+			<Button
+				variant="outline"
+				className=" !cursor-pointer"
 				disabled={currentPage === 1}
 				onClick={() => changePage(currentPage - 1)}
 			>
@@ -34,7 +49,8 @@ export default function Pagination({
 			</Button>
 			{[...Array(totalPages)]?.map((_, index) => (
 				<Button
-					variant={currentPage === index + 1 ? "soft" : "classic"}
+					className="!cursor-pointer"
+					variant={currentPage === index + 1 ? "soft" : "surface"}
 					key={index}
 					onClick={() => changePage(index + 1)}
 				>
@@ -42,10 +58,20 @@ export default function Pagination({
 				</Button>
 			))}
 			<Button
+				variant="outline"
+				className=" !cursor-pointer"
 				disabled={currentPage === totalPages}
 				onClick={() => changePage(currentPage + 1)}
 			>
 				<ArrowRightIcon />
+			</Button>
+			<Button
+				variant="outline"
+				className=" !cursor-pointer"
+				disabled={currentPage === totalPages}
+				onClick={() => changePage(totalPages)}
+			>
+				<DoubleArrowRightIcon />
 			</Button>
 		</Flex>
 	);
