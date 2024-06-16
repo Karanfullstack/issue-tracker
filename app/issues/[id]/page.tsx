@@ -38,3 +38,15 @@ export default async function page({ params }: Props) {
 		</Grid>
 	);
 }
+
+export async function generateMetadata({ params }: Props) {
+	const issue = await prisma.issue.findUnique({
+		where: {
+			id: Number(params.id),
+		},
+	});
+	return {
+		title: issue?.title,
+		description: issue?.description.substring(200, 300),
+	};
+}
