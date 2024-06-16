@@ -23,7 +23,10 @@ export default function IssueSumary({ open, inProgress, closed }: Props) {
 		<section>
 			<Flex gap={"4"}>
 				{status.map((status) => (
-					<Link href={`/issues/lists/?status=${status.status}`}>
+					<Link
+						key={status.status}
+						href={`/issues/lists/?status=${status.status}`}
+					>
 						<Card>
 							<Flex align={"start"} direction={"column"} gap={"2"}>
 								<Heading weight={"medium"} size={"3"}>
