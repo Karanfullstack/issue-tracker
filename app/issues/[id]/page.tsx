@@ -10,45 +10,45 @@ import AssigneSelect from "../_components/AssigneSelect";
 import { cache } from "react";
 
 interface Props {
-	params: { id: string };
+    params: { id: string };
 }
 
 const fetchData = cache((issueId: number) =>
-	prisma.issue.findUnique({
-		where: { id: issueId },
-		include: {
-			assignedToUser: true,
-		},
-	})
+    prisma.issue.findUnique({
+        where: { id: issueId },
+        include: {
+            assignedToUser: true,
+        },
+    }),
 );
 export default async function page({ params }: Props) {
-	const session = await getServerSession(AuthOptions);
-	const issue = await fetchData(Number(params.id));
+    const session = await getServerSession(AuthOptions);
+    const issue = await fetchData(Number(params.id));
 
-	if (!issue) notFound();
+    if (!issue) notFound();
 
-	return (
-		<Grid columns={{ initial: "1", sm: "5" }} gap={"5"}>
-			<Box className=" md:col-span-4">
-				<IssueDetails issue={issue} user={issue.assignedToUser} />
-			</Box>
+    return (
+        <Grid columns={{ initial: "1", sm: "5" }} gap={"5"}>
+            <Box className=" md:col-span-4">
+                <IssueDetails issue={issue} user={issue.assignedToUser} />
+            </Box>
 
-			{session && (
-				<Flex direction={"column"} gap={"4"}>
-					<EditIssueButton issueId={issue.id} />
-					<DeleteIssueButton issueId={issue.id} />
-					<AssigneSelect issue={issue} />
-				</Flex>
-			)}
-		</Grid>
-	);
+            {session && (
+                <Flex direction={"column"} gap={"4"}>
+                    <EditIssueButton issueId={issue.id} />
+                    <DeleteIssueButton issueId={issue.id} />
+                    <AssigneSelect issue={issue} />
+                </Flex>
+            )}
+        </Grid>
+    );
 }
 
 export async function generateMetadata({ params }: Props) {
-	const issue = await fetchData(Number(params.id));
+    const issue = await fetchData(Number(params.id));
 
-	return {
-		title: issue?.title,
-		description: issue?.description.substring(200, 300),
-	};
+    return {
+        title: issue?.title,
+        description: issue?.description.substring(200, 300),
+    };
 }
